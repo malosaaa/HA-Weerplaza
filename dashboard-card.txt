@@ -1,0 +1,265 @@
+JUST COPY BELOW IN A MANUAL DASHBOARD CARD AND CHANGE THE "YOURPLACE" ACCORDING TO YOUR ENTITY ID! 
+
+
+type: grid
+cards:
+  - type: heading
+    heading: New section
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-template-card
+        entity: sensor.weerplaza_YOURPLACE_current_weather
+        primary: >-
+          {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+          'current_weather').description_icon_title }}
+        secondary: >-
+          {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+          'current_weather').temperature }}°C · {{
+          state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+          'current_weather').location_name_observed }}
+        picture: |-
+          /local/weerplaza-icons/{{
+            state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+            'current_weather').icon.split('/')[-1]
+          }}
+        icon_color: amber
+        layout: vertical
+        fill_container: true
+        tap_action:
+          action: more-info
+        card_mod:
+          style: |
+            mushroom-template-card {
+              background: linear-gradient(to right, #fffde7, #e0f2f1);
+              border-radius: 1rem;
+              box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'hourly_forecast')[0].time }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'hourly_forecast')[0].temperature }}°C
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'hourly_forecast')[0].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'hourly_forecast')[1].time }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'hourly_forecast')[1].temperature }}°C
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'hourly_forecast')[1].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'hourly_forecast')[2].time }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'hourly_forecast')[2].temperature }}°C
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'hourly_forecast')[2].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'hourly_forecast')[3].time }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'hourly_forecast')[3].temperature }}°C
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'hourly_forecast')[3].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daily_forecast_summary')[0].date_short }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daily_forecast_summary')[0].description_icon_title }}
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'daily_forecast_summary')[0].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daily_forecast_summary')[1].date_short }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daily_forecast_summary')[1].description_icon_title }}
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'daily_forecast_summary')[1].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daily_forecast_summary')[2].date_short }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daily_forecast_summary')[2].description_icon_title }}
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'daily_forecast_summary')[2].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daily_forecast_summary')[3].date_short }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daily_forecast_summary')[3].description_icon_title }}
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'daily_forecast_summary')[3].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daypart_forecast')[0].time_of_day }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daypart_forecast')[0].temperature }}°C
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'daypart_forecast')[0].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daypart_forecast')[1].time_of_day }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daypart_forecast')[1].temperature }}°C
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'daypart_forecast')[1].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daypart_forecast')[2].time_of_day }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daypart_forecast')[2].temperature }}°C
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'daypart_forecast')[2].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daypart_forecast')[3].time_of_day }}
+            secondary: >-
+              {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+              'daypart_forecast')[3].temperature }}°C
+            picture: |-
+              /local/weerplaza-icons/{{
+                state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+                'hourly_forecast')[0].icon.split('/')[-1]
+              }}
+            layout: vertical
+            fill_container: true
+      - type: custom:mushroom-template-card
+        entity: sensor.weerplaza_YOURPLACE_current_weather
+        primary: ⚡ Weeralarm
+        secondary: >-
+          {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+          'flash_message').message }}
+        icon: mdi:flash-alert
+        icon_color: red
+        layout: vertical
+        fill_container: true
+        card_mod:
+          style: |
+            mushroom-template-card {
+              background-color: #fff3cd;
+              border-left: 5px solid #ff9800;
+              font-style: italic;
+            }
+      - type: custom:mushroom-template-card
+        primary: ☀️ Zon & 🌙 Maan
+        secondary: >-
+          Zon op: {{ state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+          'astro').sun.rise }} ·  Onder: {{
+          state_attr('sensor.weerplaza_YOURPLACE_current_weather',
+          'astro').sun.set }}
+        icon: mdi:weather-sunset
+        layout: vertical
+        multiline_secondary: true
+        tap_action:
+          action: more-info
+        card_mod:
+          style: |
+            mushroom-template-card {
+              background-color: #ede7f6;
+              border-radius: 1rem;
+            }
+      - type: custom:mushroom-entity-card
+        entity: sensor.weerplaza_YOURPLACE_current_weather
+        name: Maanfasen
+        icon: mdi:moon-waning-crescent
+        layout: vertical
+        secondary_info: >-
+          {% set phases =
+          state_attr('sensor.weerplaza_YOURPLACE_current_weather', 'moon_phases')
+          %} {% for phase in phases %}
+            • {{ phase.phase }} — {{ phase.datetime }}  {% if not loop.last %}<br>{% endif %}
+          {% endfor %}
+        card_mod:
+          style: |
+            mushroom-entity-card {
+              background-color: #f3e5f5;
+              border-radius: 1rem;
+            }
+column_span: 1

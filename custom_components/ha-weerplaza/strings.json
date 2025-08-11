@@ -1,0 +1,35 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add Weerplaza Location",
+        "description": "Enter a friendly name and the location path from weerplaza.nl (e.g., `nederland/eygelshoven/9314/`).",
+        "data": {
+          "instance_name": "Friendly Name (e.g., Eygelshoven Weather)",
+          "location_path": "Location Path (e.g., nederland/city/id/)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to weerplaza.nl. Check internet connection.",
+      "invalid_location_path": "Invalid Location Path (received 404 or no data found). Please check the path on weerplaza.nl.",
+      "parse_error": "Failed to parse data from weerplaza.nl. The website structure may have changed.",
+      "unknown_api_error": "An unknown error occurred while fetching data.",
+      "unknown": "An unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This location path is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Update Interval for {instance_name}",
+        "description": "Set how often the integration should check for new weather data.",
+        "data": {
+          "scan_interval": "Scan Interval (seconds)"
+        }
+      }
+    }
+  }
+}

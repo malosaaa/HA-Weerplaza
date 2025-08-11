@@ -1,0 +1,17 @@
+{
+  "domain": "weerplaza",
+  "name": "Weerplaza Weather",
+  "config_flow": true,
+  "documentation": "https://github.com/Malosaaa/ha-weerplaza",
+  "issue_tracker": "https://github.com/Malosaaa/ha-weerplaza/issues",
+  "codeowners": ["@Malosaaa"],
+  "requirements": [
+    "beautifulsoup4==4.12.3",
+    "lxml==5.3.2"
+  ],
+  "iot_class": "web_scraping",
+  "version": "1.0.0",
+  "dependencies": [],
+  "after_dependencies": [],
+  "integration_type": "service"
+}
