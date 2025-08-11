@@ -68,7 +68,7 @@ The example dashboard card uses custom icons to display the weather conditions. 
 
 The file `dashboard-card.txt` contains the code for a nice-looking dashboard card.
 
-**Prerequisite:** This card requires the **[Mushroom Cards](https://github.com/piitaya/lovelace-mushroom)** integration. Please install it from HACS before proceeding.
+**OPTIONAL:** This card doesn't requires the **[Mushroom Cards](https://github.com/piitaya/lovelace-mushroom)** integration. U can install it from HACS if u want to make it even better.
 
 1.  In your Home Assistant dashboard, click the three dots (⋮) in the top-right corner and select **Edit Dashboard**.
 2.  Click the **+ Add Card** button and choose the **Manual** card from the bottom of the list.
