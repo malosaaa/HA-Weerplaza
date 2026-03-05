@@ -1,74 +1,63 @@
-"""The Weerplaza Weather integration."""
 import logging
-from datetime import timedelta
-
+import os
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.const import Platform
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
-
-from .api import WeerplazaApiClient
-from .const import DOMAIN, CONF_LOCATION_PATH, PLATFORMS, DEFAULT_SCAN_INTERVAL, CONF_SCAN_INTERVAL
-from .coordinator import WeerplazaDataUpdateCoordinator
+from .const import DOMAIN, DEBUG_FILE_NAME
+from .coordinator import WeerplazaCoordinator
+from .cache import PersistentCache
 
 _LOGGER = logging.getLogger(__name__)
+PLATFORMS = [Platform.SENSOR]
 
+async def async_setup(hass: HomeAssistant, config: dict):
+    return True
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Weerplaza Weather from a config entry."""
-    _LOGGER.debug("Setting up Weerplaza Weather entry: %s", entry.entry_id)
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data.setdefault(DOMAIN, {})
 
-    location_path = entry.data[CONF_LOCATION_PATH]
-    
-    # Create the API client instance and pass the Home Assistant aiohttp_client session.
-    # This is the correct and recommended way to get the client session for external HTTP requests
-    # in Home Assistant integrations.
-    api_client = WeerplazaApiClient(hass.async_create_clientsession())
+    cache = PersistentCache(hass, f"{DOMAIN}_{entry.entry_id}")
+    initial_data = await cache.load()
 
-    # Get scan interval from options, fallback to data then default
-    scan_interval_seconds = entry.options.get(
-        CONF_SCAN_INTERVAL,
-        entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
-    )
-
-    coordinator = WeerplazaDataUpdateCoordinator(
-        hass=hass,
+    coordinator = WeerplazaCoordinator(
+        hass,
         config_entry=entry,
-        api_client=api_client, # Pass the api_client instance here
+        cache=cache,
+        initial_data=initial_data
     )
 
-    # Store the config entry in the coordinator (you might need this later)
-    # This line is redundant as config_entry is already passed to coordinator's __init__
-    # coordinator.config_entry = entry
-
-    # Fetch initial data so we have it when entities are set up
-    await coordinator.async_config_entry_first_refresh()
+    # --- L1 PERSISTENCE LOGIC ---
+    if initial_data:
+        # This is the "magic" line. It populates the coordinator 
+        # BEFORE the sensors are even registered.
+        coordinator.async_set_updated_data(initial_data)
+        _LOGGER.info("Weerplaza initialized from persistent cache")
+    else:
+        _LOGGER.warning("No cache found for Weerplaza. Fetching initial data...")
+        await coordinator.async_config_entry_first_refresh()
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
-
-    # Set up platforms (sensor)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    
+    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
-    # Set up listener for options updates (scan interval)
-    entry.async_on_unload(entry.add_update_listener(async_update_options))
+    # --- Register Service Calls ---
+    async def handle_manual_refresh(call: ServiceCall):
+        await coordinator.async_request_refresh()
+
+    async def handle_clear_cache(call: ServiceCall):
+        await cache.clear()
+        _LOGGER.info("Weerplaza cache cleared")
+
+    hass.services.async_register(DOMAIN, "manual_refresh", handle_manual_refresh)
+    hass.services.async_register(DOMAIN, "clear_cache", handle_clear_cache)
 
     return True
 
-
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload a config entry."""
-    _LOGGER.debug("Unloading Weerplaza Weather entry: %s", entry.entry_id)
-    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-
-    if unload_ok:
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
+    if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         hass.data[DOMAIN].pop(entry.entry_id)
-        _LOGGER.debug("Successfully unloaded Weerplaza Weather entry: %s", entry.entry_id)
-
     return unload_ok
 
-
-async def async_update_options(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Handle options update."""
-    _LOGGER.debug("Reloading Weerplaza Weather entry due to options update: %s", entry.entry_id)
-    await hass.config_entries.async_reload(entry.entry_id) # Reload entry to apply new options
+async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    await hass.config_entries.async_reload(entry.entry_id)
