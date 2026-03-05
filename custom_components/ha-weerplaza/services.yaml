@@ -1,0 +1,11 @@
+manual_refresh:
+  name: Weerplaza Manual Refresh
+  description: Forceert direct een update van Weerplaza via de website.
+
+clear_cache:
+  name: Weerplaza Clear Cache
+  description: Verwijdert de lokaal opgeslagen weerdata.
+
+clear_debug_file:
+  name: Weerplaza Clear Debug File
+  description: Verwijdert het debug HTML bestand.
