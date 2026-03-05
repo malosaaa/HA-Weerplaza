@@ -10,93 +10,111 @@ This custom component for Home Assistant allows you to monitor weather data for 
 This integration was created with significant collaboration, testing, and debugging from **TranQuiL (@Malosaaa)**.
 
 ***
-## Features
+## 🚀 Key Features
 
-*   ✅ **Easy UI-Based Setup**: Configure entirely through the Home Assistant user interface. No YAML required for setup.
-*   ✅ **Supports Any Location**: Simply find your location's path on Weerplaza.nl (e.g., `nederland/utrecht/19344/`) and use it during setup.
-*   ✅ **Multi-Sensor Data**: Scrapes current temperature, weather warnings, flash messages, and detailed hourly & daily forecasts.
-*   ✅ **Device Grouping**: Creates a single Home Assistant Device for your location, with all related sensors neatly attached to it.
-*   ✅ **Configurable Updates**: Easily change the data refresh interval through the integration's options.
-*   ✅ **Robust Error Handling**: If an update fails, the integration keeps the last successful data to prevent sensors from becoming `unavailable`.
-*   ✅ **Diagnostic Sensors**: Includes disabled-by-default sensors to monitor the health and status of the integration.
+* ✅ **L1-Style Persistence**: Includes a built-in cache system. Your weather data is saved to disk and loads **instantly** when Home Assistant reboots—no more "Unknown" states on startup.
+* ✅ **Lightning Detection**: Real-time tracking of the nearest lightning strike, including a dedicated `flash_range` attribute (numeric) for easy automations.
+* ✅ **Rain & Warning Alerts**: Separate attributes for local rain status (Splash) and official KNMI/Meteo warnings (Code Green/Yellow/Orange/Red).
+* ✅ **Advanced Astro Data**: Includes Sunrise, Sunset, and Moon Phases—complete with **official Moon Phase icons** pulled directly from Weerplaza.
+* ✅ **Master Sensor Approach**: A single master sensor provides the temperature, while 50+ data points (Hourly/Daily/Astro) are available as organized attributes.
+* ✅ **Service Calls**: Includes services to manually trigger a refresh or clear the local cache via Developer Tools.
 
-## Installation
+## 🛠 Installation
 
-### Method 1: HACS (Home Assistant Community Store) - Recommended
+### Method 1: HACS (Recommended)
+1. Open **HACS** -> **Integrations**.
+2. Click the 3-dots menu (top right) -> **Custom Repositories**.
+3. Paste URL: `https://github.com/Malosaaa/ha-weerplaza` | Category: **Integration**.
+4. Click **Add**, then find "Weerplaza Weather" and click **Download**.
+5. **Restart Home Assistant.**
 
-1.  Ensure you have [HACS](https://hacs.xyz/) installed.
-2.  Go to HACS -> Integrations -> Click the 3-dots menu in the top right -> **Custom Repositories**.
-3.  In the "Repository" field, paste this URL: `https://github.com/Malosaa/ha-weerplaza`
-4.  For "Category", select **Integration**.
-5.  Click **Add**.
-6.  The "Weerplaza Weather" integration will now appear in your HACS integrations list. Click **Install** or **Download**.
-7.  Restart Home Assistant.
+### Method 2: Manual
+1. Download the `weerplaza` folder from this repo.
+2. Copy it into your Home Assistant `custom_components/` directory.
+3. **Restart Home Assistant.**
 
-### Method 2: Manual Installation
+## ⚙️ Configuration
 
-1.  Using a file access tool (like Samba or File Editor), navigate to the `custom_components` directory in your Home Assistant `config` folder.
-2.  Create a new folder named `weerplaza`.
-3.  Copy all the files from this repository's `weerplaza` directory (`__init__.py`, `manifest.json`, `sensor.py`, etc.) into the new `weerplaza` folder.
-4.  Restart Home Assistant.
+1. Go to **Settings** -> **Devices & Services**.
+2. Click **+ Add Integration** and search for **Weerplaza Weather**.
+3. **Friendly Name**: Choose a name (e.g., `Home`).
+4. **Location Path**: Go to Weerplaza.nl, find your city, and copy the URL path after `.nl/`.
+   * *Example:* For `https://www.weerplaza.nl/nederland/utrecht/19344/`, use `nederland/utrecht/19344/`.
+5. **Scan Interval**: Set how often to check for updates (1800 seconds recommended).
 
-## Configuration
+## 📊 Sensors & Attributes
 
-After installing and restarting, you can add your Weerplaza location.
+### Master Sensor
+`sensor.weerplaza_<name>_current_weather`
 
-1.  Navigate to **Settings** -> **Devices & Services**.
-2.  Click the **+ ADD INTEGRATION** button in the bottom right.
-3.  Search for "**Weerplaza Weather**" and select it.
-4.  You will be prompted for two items:
-    *   **Friendly Name**: A unique name for this location, e.g., `Utrecht Weather`. This will be used for your device and entities.
-    *   **Location Path**: The path from the Weerplaza URL. Find your city on Weerplaza.nl and copy the part of the URL *after* `.nl/`. For `https://www.weerplaza.nl/nederland/utrecht/19344/`, the path is `nederland/utrecht/19344/`.
-5.  Enter the details and click **Submit**.
-6.  The integration will be set up, creating a new device and its associated sensors.
+| Attribute | Content |
+| :--- | :--- |
+| `flash_detection` | Text description of nearest lightning (e.g., "Bliksem op 10km"). |
+| `flash_range` | Numeric distance of lightning (Ideal for automations). |
+| `rain` | Local rain status (e.g., "Droog" or "Lichte regen"). |
+| `alerts` | Official Meteo warnings (e.g., "Er zijn nu geen waarschuwingen"). |
+| `daily_forecast_summary` | 7-14 day forecast including `temp_high`, `temp_low`, and `date_short`. |
+| `astro` | Sunrise and Sunset times. |
+| `moon_phases` | Upcoming phases with specific Image URLs. |
 
-## Dashboard Card Setup
+## 🛠 Services
 
-### 1. Icon Setup (Required for the Example Card)
+| Service | Description |
+| :--- | :--- |
+| `weerplaza.manual_refresh` | Forces an immediate scrape of the website. |
+| `weerplaza.clear_cache` | Deletes the local `.storage` cache file. |
 
-The example dashboard card uses custom icons to display the weather conditions. You need to place these icons in the correct folder.
 
-1.  In your Home Assistant `config` directory, find the `www` folder. If it does not exist, create it.
-2.  Inside the `www` folder, create a new folder named `weerplaza-icons`.
-3.  The final path should look like this: `config/www/weerplaza-icons/`.
-4.  Place your desired weather icon files (e.g., `.png` or `.svg` files) inside this `weerplaza-icons` folder.
-5.  Home Assistant makes this directory available at the URL `/local/weerplaza-icons/`, which the dashboard card uses to find the icons.
+## 🎨 Recommended Dashboard (Mushroom)
 
-### 2. Dashboard Card Installation
+To get the look seen in the screenshots, you will need **[Mushroom Cards](https://github.com/piitaya/lovelace-mushroom)** and **[Card Mod](https://github.com/thomasloven/lovelace-card-mod)** (both available in HACS). 
 
-The file `dashboard-card.txt` contains the code for a nice-looking dashboard card.
+*Note: Replace `yourplace` in the entity IDs below with your actual instance name.*
 
-**OPTIONAL:** This card doesn't requires the **[Mushroom Cards](https://github.com/piitaya/lovelace-mushroom)** integration. U can install it from HACS if u want to make it even better.
+```yaml
+type: vertical-stack
+cards:
+  - type: custom:mushroom-template-card
+    entity: sensor.weerplaza_yourplace_current_weather
+    primary: "{{ state_attr(entity, 'current_weather').description_icon_title }}"
+    secondary: "{{ state_attr(entity, 'current_weather').temperature }}°C · {{ state_attr(entity, 'current_weather').location_name_observed }}"
+    picture: "{{ state_attr(entity, 'current_weather').icon }}"
+    layout: vertical
+    card_mod:
+      style: |
+        mushroom-template-card {
+          background: linear-gradient(to right, #fffde7, #e0f2f1);
+          border-radius: 1rem;
+        }
 
-1.  In your Home Assistant dashboard, click the three dots (⋮) in the top-right corner and select **Edit Dashboard**.
-2.  Click the **+ Add Card** button and choose the **Manual** card from the bottom of the list.
-3.  Open the `dashboard-card.txt` file.
-4.  Copy the **entire content** of the file and paste it into the Manual card's code editor.
-5.  **Crucially, you must replace every instance of `YOURPLACE` with the slug of your instance name.** For example, if your main sensor is `sensor.weerplaza_YOURPLACE_weather_current_weather`, your slug is `YOURPLACE_weather`.
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: custom:mushroom-template-card
+        primary: "{{ state_attr('sensor.weerplaza_yourplace_current_weather', 'daily_forecast_summary')[0].date_short }}"
+        secondary: "H: {{ state_attr('sensor.weerplaza_yourplace_current_weather', 'daily_forecast_summary')[0].temp_high }}° · L: {{ state_attr('sensor.weerplaza_yourplace_current_weather', 'daily_forecast_summary')[0].temp_low }}°"
+        picture: "{{ state_attr('sensor.weerplaza_yourplace_current_weather', 'daily_forecast_summary')[0].icon }}"
+        layout: vertical
+      - type: custom:mushroom-template-card
+        primary: "{{ state_attr('sensor.weerplaza_yourplace_current_weather', 'daily_forecast_summary')[1].date_short }}"
+        secondary: "H: {{ state_attr('sensor.weerplaza_yourplace_current_weather', 'daily_forecast_summary')[1].temp_high }}° · L: {{ state_attr('sensor.weerplaza_yourplace_current_weather', 'daily_forecast_summary')[1].temp_low }}°"
+        picture: "{{ state_attr('sensor.weerplaza_yourplace_current_weather', 'daily_forecast_summary')[1].icon }}"
+        layout: vertical
 
-> ### **Very Important Note on the Example Card**
-> The code in `dashboard-card.txt` is an advanced example and references several data attributes (like `astro`, `moon_phases`, `daily_forecast_summary`, and specific `icon` fields).
-
-*Remember to replace `YOURPLACE` in the dashboard-card.txt with your own instance slug!*
-
-## Sensors Provided
-
-The integration creates the following sensors. The `<instance_slug>` is derived from the friendly name you provided (e.g., `utrecht_weather`).
-Also it contains all other data like ASTRO-MOONPHASES-LIGHTNING etc as attributes.
-
-| Sensor Name | Example Entity ID | Description |
-| :--- | :--- | :--- |
-| **Current Weather** | `sensor.weerplaza_<instance_slug>_current_weather` | Main sensor. State is the current temperature in °C. Attributes contain all other scraped data (`warnings`, `hourly_forecast`, etc.). |
-| **Warnings** | `sensor.weerplaza_<instance_slug>_warnings` | The current weather warning code (e.g., "Code Geel") or "Geen waarschuwing". |
-| **Flash Message** | `sensor.weerplaza_<instance_slug>_flash_message` | Displays special alert messages from Weerplaza. |
-| **Hourly Forecast** | `sensor.weerplaza_<instance_slug>_hourly_forecast` | State is the number of forecast hours available. Attributes contain the full forecast list. |
-| **Daily Forecast** | `sensor.weerplaza_<instance_slug>_daily_forecast` | State is the number of forecast days available. Attributes contain the full forecast list. |
-| **Last Update Status** | `sensor.weerplaza_<instance_slug>_diag_last_update_status` | (Disabled) Shows "OK" or "Error". |
-| **Last Update Time** | `sensor.weerplaza_<instance_slug>_diag_last_update_time` | (Disabled) Timestamp of the last successful update. |
-| **Consecutive Errors** | `sensor.weerplaza_<instance_slug>_diag_consecutive_errors` | (Disabled) Counts successive update failures. |
-
+  - type: custom:mushroom-template-card
+    entity: sensor.weerplaza_yourplace_current_weather
+    primary: "⚡ Bliksem & Regen Status"
+    secondary: "{{ state_attr(entity, 'flash_detection') }} | Regen: {{ state_attr(entity, 'rain') }}"
+    icon: mdi:flash-alert
+    icon_color: "{% if state_attr(entity, 'flash_range') | float < 100 %} red {% else %} amber {% endif %}"
+    card_mod:
+      style: |
+        mushroom-template-card {
+          background-color: #fff3cd;
+          border-left: 5px solid #ff9800;
+        }
+```
 
 [hacs]: https://hacs.xyz
 [hacs_badge]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge
